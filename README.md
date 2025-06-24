@@ -27,6 +27,7 @@ dependencies:
   totalpay_checkout_sdk:
     git:
       url: https://github.com/TotalPayAPI/TotalPay_Flutter_SDK.git
+      path: totalpay_checkout_sdk
   webview_flutter: ^4.2.2
 ```
 
