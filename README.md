@@ -234,7 +234,7 @@ Official API documentation:
 
 ## Getting help
 
-To report a specific issue or feature request, open a new issue.
+To report a specific issue or feature request, open a [new issue](https://github.com/TotalPayAPI/totalpay-android-sdk/issues/new).
 
 Or write a direct letter to the info@totalpay.global.
 
