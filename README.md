@@ -232,12 +232,23 @@ Official API documentation:
 
 ---
 
+## Getting help
+
+To report a specific issue or feature request, open a new issue.
+
+Or write a direct letter to the info@totalpay.global.
+
+---
+
 ## License
 
 MIT License © TotalPay
 
 ---
 
-## Support
+## Contacts
 
-For technical issues, integration help, or feature requests, open a GitHub issue or contact your TotalPay integration manager.
+Website: https://totalpay.global
+Phone: +971 4 4578506
+Email: info@totalpay.global
+Address: i-Rise Tower, Barsha Heights, Dubai, UAE.
