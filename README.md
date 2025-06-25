@@ -249,6 +249,9 @@ MIT License © TotalPay
 ## Contacts
 
 Website: https://totalpay.global
+
 Phone: +971 4 4578506
+
 Email: info@totalpay.global
+
 Address: i-Rise Tower, Barsha Heights, Dubai, UAE.
