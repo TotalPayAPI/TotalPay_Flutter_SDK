@@ -1,8 +1,16 @@
+[View SDK Wiki](https://github.com/TotalPayAPI/TotalPay_Flutter_SDK/wiki)
+
 # TotalPay Flutter SDK
 
 The **TotalPay Flutter SDK** enables seamless integration of the TotalPay Payment Gateway [https://docs.totalpay.global/checkout_integration] into your Flutter mobile applications. It supports one-time payments, recurring billing, and tokenization through a secure WebView-based checkout flow.
 
 ---
+
+<p align="center">
+  <a href="https://totalpay.global">
+      <img src="/media/header.png" alt="TotalPay" width="400px"/>
+  </a>
+</p>
 
 ## Features
 
@@ -26,7 +34,8 @@ dependencies:
     sdk: flutter
   totalpay_checkout_sdk:
     git:
-      url: https://github.com/TotalPay/TotalPay_Flutter_SDK.git
+      url: https://github.com/TotalPayAPI/TotalPay_Flutter_SDK.git
+      path: totalpay_checkout_sdk
   webview_flutter: ^4.2.2
 ```
 
@@ -231,12 +240,26 @@ Official API documentation:
 
 ---
 
+## Getting help
+
+To report a specific issue or feature request, open a [new issue](https://github.com/TotalPayAPI/totalpay-android-sdk/issues/new).
+
+Or write a direct letter to the info@totalpay.global.
+
+---
+
 ## License
 
 MIT License © TotalPay
 
 ---
 
-## Support
+## Contacts
 
-For technical issues, integration help, or feature requests, open a GitHub issue or contact your TotalPay integration manager.
+Website: https://totalpay.global
+
+Phone: +971 4 4578506
+
+Email: info@totalpay.global
+
+Address: i-Rise Tower, Barsha Heights, Dubai, UAE.
