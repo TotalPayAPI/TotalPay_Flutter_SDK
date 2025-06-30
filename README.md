@@ -149,6 +149,8 @@ if (response.success && response.redirectUrl != null) {
       builder: (_) => CheckoutWebView(
         checkoutUrl: response.redirectUrl!,
         cookieHeader: response.cookies,
+        successUrl: 'https://yourdomain.com/success',
+        cancelUrl: 'https://yourdomain.com/cancel',
       ),
     ),
   );
