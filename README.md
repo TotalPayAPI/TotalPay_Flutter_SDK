@@ -252,7 +252,7 @@ Or write a direct letter to the info@totalpay.global.
 
 ## License
 
-MIT License © TotalPay
+MIT [License](https://github.com/TotalPayAPI/TotalPay_Flutter_SDK/blob/main/LICENSE) © TotalPay
 
 ---
 
