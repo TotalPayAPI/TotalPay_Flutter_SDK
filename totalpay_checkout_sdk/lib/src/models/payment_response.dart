@@ -33,8 +33,10 @@ class PaymentResponse {
     final session = json['session'];
     final rawRedirect = json['redirect_url'];
 
+    // check nested transaction/data objects
+    final transaction = json['transaction'] ?? json['data'] ?? {};
     // Handle possible nesting under "transaction" or "data"
-    final transaction = json['transaction'] ?? {};
+    // final transaction = json['transaction'] ?? {};
     final recurringToken = json['recurring_token']?.toString() ??
         transaction['recurring_token']?.toString();
     final recurringInitTransId = json['recurring_init_trans_id']?.toString() ??
