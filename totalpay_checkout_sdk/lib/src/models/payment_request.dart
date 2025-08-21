@@ -9,9 +9,23 @@ class PaymentRequest {
   final Order order;
   final Customer customer;
   final BillingAddress billingAddress;
+
+  // recurring fields
   final bool? recurringInit;
   final String? recurringToken;
   final String? recurringInitTransId;
+
+  // Extra fields 
+  final String? channelId;
+  final int? sessionExpiry;
+  final String? expiryUrl;
+  final String? errorUrl;
+  final bool? reqToken;
+  final List<String>? cardToken;
+  final String? scheduleId;
+  final bool? vatCalc;
+  final Payee? payee;
+  final PayeeBillingAddress? payeeBillingAddress;
 
   PaymentRequest({
     required this.merchantKey,
@@ -27,6 +41,16 @@ class PaymentRequest {
     this.recurringInit,
     this.recurringToken,
     this.recurringInitTransId,
+    this.channelId,
+    this.sessionExpiry,
+    this.expiryUrl,
+    this.errorUrl,
+    this.reqToken,
+    this.cardToken,
+    this.scheduleId,
+    this.vatCalc,
+    this.payee,
+    this.payeeBillingAddress,
   });
 
   PaymentRequest copyWith({
@@ -43,6 +67,16 @@ class PaymentRequest {
     bool? recurringInit,
     String? recurringToken,
     String? recurringInitTransId,
+    String? channelId,
+    int? sessionExpiry,
+    String? expiryUrl,
+    String? errorUrl,
+    bool? reqToken,
+    List<String>? cardToken,
+    String? scheduleId,
+    bool? vatCalc,
+    Payee? payee,
+    PayeeBillingAddress? payeeBillingAddress,
   }) {
     return PaymentRequest(
       merchantKey: merchantKey ?? this.merchantKey,
@@ -58,6 +92,16 @@ class PaymentRequest {
       recurringInit: recurringInit ?? this.recurringInit,
       recurringToken: recurringToken ?? this.recurringToken,
       recurringInitTransId: recurringInitTransId ?? this.recurringInitTransId,
+      channelId: channelId ?? this.channelId,
+      sessionExpiry: sessionExpiry ?? this.sessionExpiry,
+      expiryUrl: expiryUrl ?? this.expiryUrl,
+      errorUrl: errorUrl ?? this.errorUrl,
+      reqToken: reqToken ?? this.reqToken,
+      cardToken: cardToken ?? this.cardToken,
+      scheduleId: scheduleId ?? this.scheduleId,
+      vatCalc: vatCalc ?? this.vatCalc,
+      payee: payee ?? this.payee,
+      payeeBillingAddress: payeeBillingAddress ?? this.payeeBillingAddress,
     );
   }
 
@@ -75,14 +119,25 @@ class PaymentRequest {
       'billing_address': billingAddress.toJson(),
     };
 
-    if (recurringInit != null) {
-      map['recurring_init'] = recurringInit!;
-    }
-    if (recurringToken != null) {
-      map['recurring_token'] = recurringToken!;
-    }
+    // Recurring
+    if (recurringInit != null) map['recurring_init'] = recurringInit!;
+    if (recurringToken != null) map['recurring_token'] = recurringToken!;
     if (recurringInitTransId != null) {
       map['recurring_init_trans_id'] = recurringInitTransId!;
+    }
+
+    // Extras
+    if (channelId != null) map['channel_id'] = channelId!;
+    if (sessionExpiry != null) map['session_expiry'] = sessionExpiry!;
+    if (expiryUrl != null) map['expiry_url'] = expiryUrl!;
+    if (errorUrl != null) map['error_url'] = errorUrl!;
+    if (reqToken != null) map['req_token'] = reqToken!;
+    if (cardToken != null) map['card_token'] = cardToken!;
+    if (scheduleId != null) map['schedule_id'] = scheduleId!;
+    if (vatCalc != null) map['vat_calc'] = vatCalc!;
+    if (payee != null) map['payee'] = payee!.toJson();
+    if (payeeBillingAddress != null) {
+      map['payee_billing_address'] = payeeBillingAddress!.toJson();
     }
 
     return map;
@@ -110,10 +165,22 @@ class PaymentRequest {
       'billing_phone': billingAddress.phone,
     };
 
+    // Recurring
     if (recurringInit != null) map['recurring_init'] = recurringInit.toString();
     if (recurringToken != null) map['recurring_token'] = recurringToken!;
-    if (recurringInitTransId != null)
+    if (recurringInitTransId != null) {
       map['recurring_init_trans_id'] = recurringInitTransId!;
+    }
+
+    // Extras (as strings)
+    if (channelId != null) map['channel_id'] = channelId!;
+    if (sessionExpiry != null) map['session_expiry'] = sessionExpiry.toString();
+    if (expiryUrl != null) map['expiry_url'] = expiryUrl!;
+    if (errorUrl != null) map['error_url'] = errorUrl!;
+    if (reqToken != null) map['req_token'] = reqToken.toString();
+    if (cardToken != null) map['card_token'] = cardToken!.join(',');
+    if (scheduleId != null) map['schedule_id'] = scheduleId!;
+    if (vatCalc != null) map['vat_calc'] = vatCalc.toString();
 
     return map;
   }
@@ -145,17 +212,21 @@ class Order {
 class Customer {
   final String name;
   final String email;
+  final String? birthDate;
 
   Customer({
     required this.name,
     required this.email,
+    this.birthDate,
   });
 
   Map<String, dynamic> toJson() {
-    return {
+    final map = {
       'name': name,
       'email': email,
     };
+    if (birthDate != null) map['birth_date'] = birthDate!;
+    return map;
   }
 }
 
@@ -165,6 +236,9 @@ class BillingAddress {
   final String state;
   final String address;
   final String phone;
+  final String? district;
+  final String? houseNumber;
+  final String? zip;
 
   BillingAddress({
     required this.country,
@@ -172,15 +246,68 @@ class BillingAddress {
     required this.state,
     required this.address,
     required this.phone,
+    this.district,
+    this.houseNumber,
+    this.zip,
   });
 
   Map<String, dynamic> toJson() {
-    return {
+    final map = {
       'country': country,
       'city': city,
       'state': state,
       'address': address,
       'phone': phone,
     };
+    if (district != null) map['district'] = district!;
+    if (houseNumber != null) map['house_number'] = houseNumber!;
+    if (zip != null) map['zip'] = zip!;
+    return map;
+  }
+}
+
+class Payee {
+  final String name;
+  final String? email;
+
+  Payee({required this.name, this.email});
+
+  Map<String, dynamic> toJson() {
+    final map = {'name': name};
+    if (email != null) map['email'] = email!;
+    return map;
+  }
+}
+
+class PayeeBillingAddress {
+  final String country;
+  final String city;
+  final String state;
+  final String address;
+  final String? district;
+  final String? houseNumber;
+  final String? zip;
+
+  PayeeBillingAddress({
+    required this.country,
+    required this.city,
+    required this.state,
+    required this.address,
+    this.district,
+    this.houseNumber,
+    this.zip,
+  });
+
+  Map<String, dynamic> toJson() {
+    final map = {
+      'country': country,
+      'city': city,
+      'state': state,
+      'address': address,
+    };
+    if (district != null) map['district'] = district!;
+    if (houseNumber != null) map['house_number'] = houseNumber!;
+    if (zip != null) map['zip'] = zip!;
+    return map;
   }
 }
