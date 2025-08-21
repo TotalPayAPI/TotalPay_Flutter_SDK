@@ -56,4 +56,22 @@ class HashUtil {
 
     return sha1Digest;
   }
+  
+  /// Hash for getTransactionStatus
+  static String generateStatusHash({
+    required String transactionId,
+    required String password,
+  }) {
+    final raw = (transactionId + password).toUpperCase();
+
+    TotalPaySdk().debugLog("Status raw string: $raw");
+
+    final md5Digest = md5.convert(utf8.encode(raw)).toString();
+    TotalPaySdk().debugLog("Status MD5 Hash: $md5Digest");
+
+    final sha1Digest = sha1.convert(utf8.encode(md5Digest)).toString();
+    TotalPaySdk().debugLog("Status SHA1 Hash: $sha1Digest");
+
+    return sha1Digest;
+  }
 }
