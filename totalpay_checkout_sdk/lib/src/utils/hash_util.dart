@@ -35,14 +35,13 @@ class HashUtil {
     required Customer customer,
     required String password,
   }) {
-    final raw = (order.number +
-            order.amount +
-            order.currency +
-            token +
-            transId +
-            customer.email +
-            password)
-        .toUpperCase();
+      final raw = (transId +
+          token +
+          order.number +
+          order.amount +
+          order.description +
+          password)
+      .toUpperCase();
 
     TotalPaySdk().debugLog("Recurring raw string: $raw");
 
