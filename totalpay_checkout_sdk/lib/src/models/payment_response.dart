@@ -14,6 +14,13 @@ class PaymentResponse {
   final String? recurringToken;
   final String? recurringInitTransId;
 
+  // New response fields
+  final String? paymentId;
+  final String? orderId;
+  final String? refundedAmount;
+  final String? voided;
+  final String? retryStatus;
+
   PaymentResponse({
     required this.success,
     this.transactionId,
@@ -27,6 +34,11 @@ class PaymentResponse {
     this.cookies,
     this.recurringToken,
     this.recurringInitTransId,
+    this.paymentId,
+    this.orderId,
+    this.refundedAmount,
+    this.voided,
+    this.retryStatus,
   });
 
   factory PaymentResponse.fromJson(Map<String, dynamic> json) {
@@ -36,13 +48,12 @@ class PaymentResponse {
     // check nested transaction/data objects
     final transaction = json['transaction'] ?? json['data'] ?? {};
     // Handle possible nesting under "transaction" or "data"
-    // final transaction = json['transaction'] ?? {};
+    //final transaction = json['transaction'] ?? {};
     final recurringToken = json['recurring_token']?.toString() ??
         transaction['recurring_token']?.toString();
     final recurringInitTransId = json['recurring_init_trans_id']?.toString() ??
         transaction['recurring_init_trans_id']?.toString();
 
-    // Debug logs to verify
     debugPrint("Extracted recurring_token: $recurringToken");
     debugPrint("Extracted recurring_init_trans_id: $recurringInitTransId");
 
@@ -51,9 +62,9 @@ class PaymentResponse {
           (json['redirect_url'] != null &&
               json['redirect_url'].toString().isNotEmpty),
       transactionId: recurringInitTransId ??
-          json['transaction_id']
-              ?.toString(), // prioritize recurring_init_trans_id
-      status: json['status']?.toString(),
+          json['transaction_id']?.toString() ??
+          transaction['id']?.toString(),
+      status: json['status']?.toString() ?? transaction['status']?.toString(),
       message: json['message']?.toString(),
       redirectUrl: rawRedirect is String ? rawRedirect : '',
       sessionId: session != null ? session['id']?.toString() : null,
@@ -64,6 +75,11 @@ class PaymentResponse {
       errors: (json['errors'] as List<dynamic>?)
           ?.map((e) => Map<String, dynamic>.from(e))
           .toList(),
+      paymentId: json['payment_id']?.toString() ?? transaction['payment_id']?.toString(),
+      orderId: json['order_id']?.toString() ?? transaction['order_id']?.toString(),
+      refundedAmount: json['refunded_amount']?.toString(),
+      voided: json['voided']?.toString(),
+      retryStatus: json['retry_status']?.toString(),
     );
   }
 
@@ -80,6 +96,11 @@ class PaymentResponse {
     String? cookies,
     String? recurringToken,
     String? recurringInitTransId,
+    String? paymentId,
+    String? orderId,
+    String? refundedAmount,
+    String? voided,
+    String? retryStatus,
   }) {
     return PaymentResponse(
       success: success ?? this.success,
@@ -94,6 +115,11 @@ class PaymentResponse {
       cookies: cookies ?? this.cookies,
       recurringToken: recurringToken ?? this.recurringToken,
       recurringInitTransId: recurringInitTransId ?? this.recurringInitTransId,
+      paymentId: paymentId ?? this.paymentId,
+      orderId: orderId ?? this.orderId,
+      refundedAmount: refundedAmount ?? this.refundedAmount,
+      voided: voided ?? this.voided,
+      retryStatus: retryStatus ?? this.retryStatus,
     );
   }
 }
