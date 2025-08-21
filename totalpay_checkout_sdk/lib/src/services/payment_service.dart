@@ -140,7 +140,6 @@ class PaymentService {
       token: recurringToken,
       transId: recurringInitTransId,
       order: order,
-      customer: customer,
       password: TotalPaySdk().merchantPassword,
     );
 
