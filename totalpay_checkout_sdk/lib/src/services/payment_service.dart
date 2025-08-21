@@ -8,6 +8,7 @@ import 'package:totalpay_checkout_sdk/src/utils/hash_util.dart';
 import '../totalpay_sdk.dart';
 
 class PaymentService {
+  /// Start a one-time or recurring init payment
   Future<PaymentResponse> initiatePayment(PaymentRequest request) async {
     final hash = HashUtil.generateHash(
       request: request,
@@ -23,9 +24,6 @@ class PaymentService {
 
     TotalPaySdk().debugLog('Sending Payload: ${jsonEncode(payload)}');
     TotalPaySdk().debugLog('Sending request...');
-
-    //print('Sending Payload: ${jsonEncode(payload)}');
-    //print('Sending request...');
 
     try {
       final response = await http
@@ -44,10 +42,6 @@ class PaymentService {
       TotalPaySdk().debugLog(
           'REDIRECT SHA1: ${sha1.convert(utf8.encode(rawRedirect ?? ''))}');
 
-      //print("MANUAL REDIRECT VALUE:");
-      //print(rawRedirect);
-      //print("REDIRECT SHA1: ${sha1.convert(utf8.encode(rawRedirect ?? ''))}");
-
       try {
         log('Decoded body: ${decoded.toString()}');
         TotalPaySdk().debugLog('API response: ${response.body}');
@@ -63,22 +57,12 @@ class PaymentService {
 
           print("Parsed recurring_token: ${base.recurringToken}");
           print("Parsed recurring_init_trans_id: ${base.recurringInitTransId}");
-          print("Token (legacy): ${base.token}");
 
           final result = base.copyWith(
             success: isSuccess,
             redirectUrl: rawRedirect,
             cookies: response.headers['set-cookie'],
           );
-
-          TotalPaySdk().debugLog('Final Redirect URL returned:');
-          TotalPaySdk().debugLog('result.redirectUrl');
-          TotalPaySdk().debugLog(
-              'Final SHA1: ${sha1.convert(utf8.encode(result.redirectUrl ?? ''))}');
-
-          //print(" Final Redirect URL returned:");
-          //print(result.redirectUrl);
-          //print("Final SHA1: ${sha1.convert(utf8.encode(result.redirectUrl ?? ''))}");
 
           return result;
         } else {
@@ -110,6 +94,34 @@ class PaymentService {
     }
   }
 
+  /// Fetch recurring_token and recurring_init_trans_id
+  Future<PaymentResponse> getTransactionStatus(String transactionId) async {
+    final payload = {
+      'merchant_key': TotalPaySdk().merchantKey,
+      'transaction_id': transactionId,
+    };
+
+    final hash = HashUtil.generateStatusHash(
+      transactionId: transactionId,
+      password: TotalPaySdk().merchantPassword,
+    );
+    payload['hash'] = hash;
+
+    try {
+      final response = await http.post(
+        Uri.parse('https://checkout.totalpay.global/api/v1/transaction/status'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(payload),
+      );
+
+      final decoded = jsonDecode(response.body);
+      return PaymentResponse.fromJson(decoded);
+    } catch (e) {
+      return PaymentResponse(success: false, message: 'Status check failed: $e');
+    }
+  }
+
+  /// Make recurring payment using token + init transaction ID
   Future<PaymentResponse> makeRecurringPayment({
     required String recurringToken,
     required String recurringInitTransId,
@@ -135,7 +147,6 @@ class PaymentService {
     payload['hash'] = hash;
 
     TotalPaySdk().debugLog('Recurring Payload: ${jsonEncode(payload)}');
-    //print('Recurring Payload: ${jsonEncode(payload)}');
 
     try {
       final response = await http
@@ -149,9 +160,6 @@ class PaymentService {
 
       TotalPaySdk().debugLog('Recurring API Status: ${response.statusCode}');
       TotalPaySdk().debugLog('Recurring Body: ${response.body}');
-
-      //print('Recurring API Status: ${response.statusCode}');
-      //print('Recurring Body: ${response.body}');
 
       final decoded = jsonDecode(response.body);
       return PaymentResponse.fromJson(decoded);
