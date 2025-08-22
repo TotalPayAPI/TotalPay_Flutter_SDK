@@ -60,9 +60,9 @@ class PaymentResponse {
         json['payment_id']?.toString(); // fallback for /payment/status
   
     // transactionId / paymentId
-    final txnId = json['transaction_id']?.toString() ??
-        transaction['transaction_id']?.toString() ??
-        json['payment_id']?.toString();
+    final txnId = json['payment_id']?.toString() ??
+        json['transaction_id']?.toString() ??
+        transaction['transaction_id']?.toString();
   
     debugPrint("Extracted recurring_token: $recurringToken");
     debugPrint("Extracted recurring_init_trans_id: $recurringInitTransId");
