@@ -86,33 +86,40 @@ class PaymentService {
     }
   }
 
-  /// Fetch transaction status
-  Future<PaymentResponse> getTransactionStatus(String transactionId) async {
+  /// Fetch transaction status 
+  Future<PaymentResponse> getTransactionStatus(String paymentId) async {
     final payload = {
       'merchant_key': TotalPaySdk().merchantKey,
-      'transaction_id': transactionId,
+      'payment_id': paymentId, 
     };
-
+  
     final hash = HashUtil.generateStatusHash(
-      transactionId: transactionId,
+      transactionId: paymentId,
       password: TotalPaySdk().merchantPassword,
     );
     payload['hash'] = hash;
-
+  
     try {
       final response = await http.post(
         Uri.parse('https://checkout.totalpay.global/api/v1/payment/status'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(payload),
       );
-
+  
       final decoded = jsonDecode(response.body);
+      TotalPaySdk().debugLog('Payment Status Response: $decoded');
+  
       return PaymentResponse.fromJson(decoded);
-    } catch (e) {
-      return PaymentResponse(success: false, message: 'Status check failed: $e');
+    } catch (e, stack) {
+      print('Status Check Exception: $e');
+      print(stack);
+      return PaymentResponse(
+        success: false,
+        message: 'Status check failed: $e',
+      );
     }
   }
-
+  
   /// Make recurring payment using token + init transaction ID
   Future<PaymentResponse> makeRecurringPayment({
     required String recurringToken,
