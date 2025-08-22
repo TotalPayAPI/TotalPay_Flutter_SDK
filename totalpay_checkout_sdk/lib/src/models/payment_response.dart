@@ -14,12 +14,12 @@ class PaymentResponse {
   final String? recurringToken;
   final String? recurringInitTransId;
 
-  // New response fields
-  final String? paymentId;
-  final String? orderId;
-  final String? refundedAmount;
-  final String? voided;
-  final String? retryStatus;
+  // Extra response fields
+  final String? channelId;
+  final bool? reqToken;
+  final List<String>? cardToken;
+  final String? scheduleId;
+  final bool? vatCalc;
 
   PaymentResponse({
     required this.success,
@@ -34,21 +34,19 @@ class PaymentResponse {
     this.cookies,
     this.recurringToken,
     this.recurringInitTransId,
-    this.paymentId,
-    this.orderId,
-    this.refundedAmount,
-    this.voided,
-    this.retryStatus,
+    this.channelId,
+    this.reqToken,
+    this.cardToken,
+    this.scheduleId,
+    this.vatCalc,
   });
 
   factory PaymentResponse.fromJson(Map<String, dynamic> json) {
     final session = json['session'];
     final rawRedirect = json['redirect_url'];
 
-    // check nested transaction/data objects
     final transaction = json['transaction'] ?? json['data'] ?? {};
-    // Handle possible nesting under "transaction" or "data"
-    //final transaction = json['transaction'] ?? {};
+
     final recurringToken = json['recurring_token']?.toString() ??
         transaction['recurring_token']?.toString();
     final recurringInitTransId = json['recurring_init_trans_id']?.toString() ??
@@ -62,9 +60,8 @@ class PaymentResponse {
           (json['redirect_url'] != null &&
               json['redirect_url'].toString().isNotEmpty),
       transactionId: recurringInitTransId ??
-          json['transaction_id']?.toString() ??
-          transaction['id']?.toString(),
-      status: json['status']?.toString() ?? transaction['status']?.toString(),
+          json['transaction_id']?.toString(),
+      status: json['status']?.toString(),
       message: json['message']?.toString(),
       redirectUrl: rawRedirect is String ? rawRedirect : '',
       sessionId: session != null ? session['id']?.toString() : null,
@@ -72,14 +69,16 @@ class PaymentResponse {
       cardBrand: json['card_brand']?.toString(),
       recurringToken: recurringToken,
       recurringInitTransId: recurringInitTransId,
+      channelId: json['channel_id']?.toString(),
+      reqToken: json['req_token'] == true,
+      cardToken: (json['card_token'] is List)
+          ? List<String>.from(json['card_token'])
+          : null,
+      scheduleId: json['schedule_id']?.toString(),
+      vatCalc: json['vat_calc'] == true,
       errors: (json['errors'] as List<dynamic>?)
           ?.map((e) => Map<String, dynamic>.from(e))
           .toList(),
-      paymentId: json['payment_id']?.toString() ?? transaction['payment_id']?.toString(),
-      orderId: json['order_id']?.toString() ?? transaction['order_id']?.toString(),
-      refundedAmount: json['refunded_amount']?.toString(),
-      voided: json['voided']?.toString(),
-      retryStatus: json['retry_status']?.toString(),
     );
   }
 
@@ -96,11 +95,11 @@ class PaymentResponse {
     String? cookies,
     String? recurringToken,
     String? recurringInitTransId,
-    String? paymentId,
-    String? orderId,
-    String? refundedAmount,
-    String? voided,
-    String? retryStatus,
+    String? channelId,
+    bool? reqToken,
+    List<String>? cardToken,
+    String? scheduleId,
+    bool? vatCalc,
   }) {
     return PaymentResponse(
       success: success ?? this.success,
@@ -115,11 +114,11 @@ class PaymentResponse {
       cookies: cookies ?? this.cookies,
       recurringToken: recurringToken ?? this.recurringToken,
       recurringInitTransId: recurringInitTransId ?? this.recurringInitTransId,
-      paymentId: paymentId ?? this.paymentId,
-      orderId: orderId ?? this.orderId,
-      refundedAmount: refundedAmount ?? this.refundedAmount,
-      voided: voided ?? this.voided,
-      retryStatus: retryStatus ?? this.retryStatus,
+      channelId: channelId ?? this.channelId,
+      reqToken: reqToken ?? this.reqToken,
+      cardToken: cardToken ?? this.cardToken,
+      scheduleId: scheduleId ?? this.scheduleId,
+      vatCalc: vatCalc ?? this.vatCalc,
     );
   }
 }
