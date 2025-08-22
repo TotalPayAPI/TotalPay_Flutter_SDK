@@ -44,38 +44,54 @@ class PaymentResponse {
   factory PaymentResponse.fromJson(Map<String, dynamic> json) {
     final session = json['session'];
     final rawRedirect = json['redirect_url'];
-
+  
+    // check both possible nestings
     final transaction = json['transaction'] ?? json['data'] ?? {};
-
-    final recurringToken = json['recurring_token']?.toString() ??
+  
+    final recurringToken =
+        json['recurring_token']?.toString() ??
         transaction['recurring_token']?.toString();
-    final recurringInitTransId = json['recurring_init_trans_id']?.toString() ??
+  
+    final recurringInitTransId =
+        json['recurring_init_trans_id']?.toString() ??
         transaction['recurring_init_trans_id']?.toString();
-
+  
     debugPrint("Extracted recurring_token: $recurringToken");
     debugPrint("Extracted recurring_init_trans_id: $recurringInitTransId");
-
+  
     return PaymentResponse(
       success: json['success']?.toString().toLowerCase() == 'true' ||
-          (json['redirect_url'] != null &&
-              json['redirect_url'].toString().isNotEmpty),
-      transactionId: recurringInitTransId ??
-          json['transaction_id']?.toString(),
-      status: json['status']?.toString(),
-      message: json['message']?.toString(),
+          (rawRedirect != null && rawRedirect.toString().isNotEmpty),
+      transactionId: json['transaction_id']?.toString() ??
+          transaction['transaction_id']?.toString() ??
+          recurringInitTransId,
+      status: json['status']?.toString() ?? transaction['status']?.toString(),
+      message: json['message']?.toString() ?? transaction['message']?.toString(),
       redirectUrl: rawRedirect is String ? rawRedirect : '',
       sessionId: session != null ? session['id']?.toString() : null,
-      token: recurringToken ?? json['token']?.toString(),
-      cardBrand: json['card_brand']?.toString(),
+      token: json['token']?.toString() ??
+          transaction['token']?.toString() ??
+          recurringToken,
+      cardBrand: json['card_brand']?.toString() ??
+          transaction['card_brand']?.toString(),
       recurringToken: recurringToken,
       recurringInitTransId: recurringInitTransId,
-      channelId: json['channel_id']?.toString(),
-      reqToken: json['req_token'] == true,
+  
+      // extra fields (check root + transaction)
+      channelId: json['channel_id']?.toString() ??
+          transaction['channel_id']?.toString(),
+      reqToken: json['req_token'] == true ||
+          transaction['req_token'] == true,
       cardToken: (json['card_token'] is List)
           ? List<String>.from(json['card_token'])
-          : null,
-      scheduleId: json['schedule_id']?.toString(),
-      vatCalc: json['vat_calc'] == true,
+          : (transaction['card_token'] is List)
+              ? List<String>.from(transaction['card_token'])
+              : null,
+      scheduleId: json['schedule_id']?.toString() ??
+          transaction['schedule_id']?.toString(),
+      vatCalc: json['vat_calc'] == true ||
+          transaction['vat_calc'] == true,
+  
       errors: (json['errors'] as List<dynamic>?)
           ?.map((e) => Map<String, dynamic>.from(e))
           .toList(),
