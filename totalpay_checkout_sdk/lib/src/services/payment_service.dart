@@ -94,7 +94,7 @@ class PaymentService {
     };
   
     final hash = HashUtil.generateStatusHash(
-      transactionId: paymentId,
+      paymentId: paymentId,
       password: TotalPaySdk().merchantPassword,
     );
     payload['hash'] = hash;
