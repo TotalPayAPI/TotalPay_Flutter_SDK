@@ -101,7 +101,7 @@ class PaymentService {
 
     try {
       final response = await http.post(
-        Uri.parse('https://checkout.totalpay.global/api/v1/transaction/status'),
+        Uri.parse('https://checkout.totalpay.global/api/v1/payment/status'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(payload),
       );
