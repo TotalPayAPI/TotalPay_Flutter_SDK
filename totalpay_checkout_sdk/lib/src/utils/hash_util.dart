@@ -53,12 +53,12 @@ class HashUtil {
     return sha1Digest;
   }
 
-  /// Transaction status hash: SHA1(MD5(transactionId + password).upper)
+  /// Transaction status hash: SHA1(MD5(paymentId + password).upper)
   static String generateStatusHash({
-    required String transactionId,
+    required String paymentId,
     required String password,
   }) {
-    final raw = (transactionId + password).toUpperCase();
+    final raw = (paymentId + password).toUpperCase();
 
     TotalPaySdk().debugLog("Status raw string: $raw");
 
