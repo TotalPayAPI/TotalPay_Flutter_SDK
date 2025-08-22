@@ -37,8 +37,7 @@ class PaymentService {
       final Map<String, dynamic> decoded = jsonDecode(response.body);
       final rawRedirect = decoded['redirect_url'];
 
-      TotalPaySdk().debugLog('MANUAL REDIRECT VALUE:');
-      TotalPaySdk().debugLog(rawRedirect);
+      TotalPaySdk().debugLog('MANUAL REDIRECT VALUE: $rawRedirect');
       TotalPaySdk().debugLog(
           'REDIRECT SHA1: ${sha1.convert(utf8.encode(rawRedirect ?? ''))}');
 
@@ -51,12 +50,7 @@ class PaymentService {
               decoded['success']?.toString().toLowerCase() == 'true' ||
                   (rawRedirect != null && rawRedirect.toString().isNotEmpty);
 
-          print('Raw response body:\n${jsonEncode(decoded)}');
-
           final base = PaymentResponse.fromJson(decoded);
-
-          print("Parsed recurring_token: ${base.recurringToken}");
-          print("Parsed recurring_init_trans_id: ${base.recurringInitTransId}");
 
           final result = base.copyWith(
             success: isSuccess,
@@ -80,7 +74,6 @@ class PaymentService {
         return PaymentResponse(
           success: false,
           message: 'Failed to parse response body',
-          errors: null,
         );
       }
     } catch (e, stack) {
@@ -89,12 +82,11 @@ class PaymentService {
       return PaymentResponse(
         success: false,
         message: 'Exception occurred: $e',
-        errors: null,
       );
     }
   }
 
-  /// Fetch recurring_token and recurring_init_trans_id
+  /// Fetch transaction status
   Future<PaymentResponse> getTransactionStatus(String transactionId) async {
     final payload = {
       'merchant_key': TotalPaySdk().merchantKey,
